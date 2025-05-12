@@ -79,7 +79,7 @@ A comprehensive web application for managing ship maintenance operations, built 
    yarn dev
    ```
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+4. Open [https://ship-dashboard.vercel.app/dashboard] in your browser.
 
 ## Project Structure
 

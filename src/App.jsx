@@ -1,31 +1,71 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ShipsPage from './pages/ShipsPage';
-import ShipDetailPage from './pages/ShipDetailPage';
 import JobsPage from './pages/JobsPage';
-import Navbar from './components/Navbar';
-import ComponentList from './components/Components/ComponentList';
-import ComponentForm from './components/Components/ComponentForm';
+import CalendarPage from './pages/CalendarPage';
+import Layout from './components/Layout';
 
-import ProtectedRoute from './components/ProtectedRoute';
+const ProtectedRoute = ({ children, roles }) => {
+  const { currentUser } = useAuth();
 
-function App() {
+  if (!currentUser) {
+    return <Navigate to="/login" />;
+  }
+
+  if (roles && !roles.includes(currentUser.role)) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return <Layout>{children}</Layout>;
+};
+
+const App = () => {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-        <Route path="/ships/*" element={<ProtectedRoute><ShipsPage /></ProtectedRoute>} />
-        <Route path="/ships/:id" element={<ProtectedRoute><ShipDetailPage /></ProtectedRoute>} />
-        <Route path="/ships/:shipId/jobs/*" element={<ProtectedRoute><JobsPage /></ProtectedRoute>} />
-        <Route path="/ships/:shipId/components" element={<ComponentList />} />
-        <Route path="/ships/:shipId/components/new" element={<ComponentForm />} />
-        <Route path="/ships/:shipId/components/:componentId" element={<ComponentForm />} />     
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/ships/*"
+        element={
+          <ProtectedRoute>
+            <ShipsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/jobs/*"
+        element={
+          <ProtectedRoute roles={['Admin', 'Engineer']}>
+            <JobsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route
+        path="/calendar"
+        element={
+          <ProtectedRoute>
+            <CalendarPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route path="/" element={<Navigate to="/dashboard" />} />
+    </Routes>
   );
-}
+};
 
 export default App;

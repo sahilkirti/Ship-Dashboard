@@ -1,60 +1,67 @@
 import React from 'react';
-import { getData } from '../../utils/localStorageUtils';
 import { Link } from 'react-router-dom';
+import { useShips } from '../../contexts/ShipsContext';
+import { canManageShips } from '../../utils/roleUtils';
+import { useAuth } from '../../contexts/AuthContext';
 
 const ShipList = () => {
-  const ships = getData('ships') || [];
+  const { ships } = useShips();
+  const { currentUser } = useAuth();
+  const canManage = canManageShips(currentUser?.role);
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Ships</h2>
-        <Link
-          to="/ships/new"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Add Ship
-        </Link>
+    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+      <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
+        <h3 className="text-lg leading-6 font-medium text-gray-900">Ships</h3>
+        {canManage && (
+          <Link
+            to="/ships/new"
+            className="btn btn-primary"
+          >
+            Add New Ship
+          </Link>
+        )}
       </div>
-      {ships.length === 0 ? (
-        <p className="text-gray-600">No ships available.</p>
-      ) : (
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-3 py-2 text-left">Name</th>
-              <th className="border px-3 py-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ships.map((ship, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td className="border px-3 py-2">{ship.name}</td>
-                <td className="border px-3 py-2 space-x-4">
-                  <Link
-                    to={`/ships/${ship.id}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    View
-                  </Link>
-                  <Link
-                    to={`/ships/${ship.id}/components`}
-                    className="text-green-600 hover:underline"
-                  >
-                    Components
-                  </Link>
-                  <Link
-                    to={`/ships/${ship.id}/jobs`}
-                    className="text-purple-600 hover:underline"
-                  >
-                    Jobs
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <ul className="divide-y divide-gray-200">
+        {ships.map((ship) => (
+          <li key={ship.id}>
+            <Link
+              to={`/ships/${ship.id}`}
+              className="block hover:bg-gray-50"
+            >
+              <div className="px-4 py-4 sm:px-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <p className="text-sm font-medium text-blue-600 truncate">
+                      {ship.name}
+                    </p>
+                    <p className="ml-2 flex-shrink-0 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      {ship.status}
+                    </p>
+                  </div>
+                  <div className="ml-2 flex-shrink-0 flex">
+                    <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                      {ship.type}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-2 sm:flex sm:justify-between">
+                  <div className="sm:flex">
+                    <p className="flex items-center text-sm text-gray-500">
+                      {ship.location}
+                    </p>
+                  </div>
+                  <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                    <p>
+                      Last updated: {new Date(ship.lastUpdated).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

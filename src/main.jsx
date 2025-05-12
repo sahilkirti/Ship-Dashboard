@@ -1,25 +1,25 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './styles/main.css';
-import App from './App.jsx';
-import { initMockData } from './utils/localStorageUtils';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { ShipsProvider } from './contexts/ShipsContext';
 import { ComponentsProvider } from './contexts/ComponentsContext';
 import { JobsProvider } from './contexts/JobsContext';
+import './index.css';
 
-initMockData();
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <AuthProvider>
-      <ShipsProvider>
-        <ComponentsProvider>
-          <JobsProvider>
-            <App />
-          </JobsProvider>
-        </ComponentsProvider>
-      </ShipsProvider>
-    </AuthProvider>
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <ShipsProvider>
+          <ComponentsProvider>
+            <JobsProvider>
+              <App />
+            </JobsProvider>
+          </ComponentsProvider>
+        </ShipsProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </React.StrictMode>
 );

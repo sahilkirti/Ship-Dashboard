@@ -136,7 +136,7 @@ ship-dashboard/
 - Job timeline visualization
 - Schedule conflict detection
 
-## Development
+## Development:
 
 ### Available Scripts
 
